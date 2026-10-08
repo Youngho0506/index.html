@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a73e8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>친절한 시니어 영어 선생님</title>
+  <style>
+    :root {
+      --primary: #1a73e8;
+      --primary-hover: #1557b0;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-main: #202124;
+      --text-sub: #5f6368;
+      --border: #dadce0;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 22px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-settings {
+      background: none;
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--text-sub);
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    .notice-card {
+      background-color: #e8f0fe;
+      border-left: 4px solid var(--primary);
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .input-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .input-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 110px;
+      padding: 14px;
+      font-size: 18px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      border-radius: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      grid-column: span 2;
+    }
+
+    .btn-primary:active {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: #e8f0fe;
+      color: var(--primary);
+      border: 1px solid #d2e3fc;
+    }
+
+    .btn-secondary:active {
+      background-color: #d2e3fc;
+    }
+
+    .image-preview-container {
+      margin-top: 14px;
+      display: none;
+      position: relative;
+    }
+
+    .image-preview {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .btn-remove-image {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .loading-state {
+      display: none;
+      text-align: center;
+      padding: 30px 10px;
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .loading-subtext {
+      font-size: 15px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .results-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sentence-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 22px;
+      border: 2px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .sentence-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .sentence-index {
+      background-color: #e8f0fe;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .btn-listen {
+      background-color: #34a853;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(52,168,83,0.3);
+      transition: transform 0.1s, background-color 0.2s;
+    }
+
+    .btn-listen:active {
+      transform: scale(0.97);
+      background-color: #2d9249;
+    }
+
+    .btn-listen.playing {
+      background-color: #ea4335;
+    }
+
+    .original-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .chunked-text {
+      font-size: 19px;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 16px;
+      background: #f1f3f4;
+      padding: 10px 14px;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .chunked-label {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+      font-weight: normal;
+      display: block;
+    }
+
+    .detail-row {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .detail-title {
+      font-size: 14px;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .pronunciation-box {
+      font-size: 20px;
+      font-weight: 700;
+      color: #b05a00;
+      background: #fef7e0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .korean-box {
+      font-size: 19px;
+      color: #202124;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .modal h2 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+
+    .modal input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📖 친절한 영어선생님</h1>
+    <button class="btn-settings" onclick="openSettings()">⚙️ 설정 (API키)</button>
+  </header>
+
+  <main>
+    <div class="notice-card">
+      💡 <b>부모님을 위한 안심 영어 도우미</b><br>
+      영어 문장을 직접 입력하거나 사진을 올리면 <b>또박또박한 한글 발음</b>과 <b>느린 원어민 음성</b>을 들려드립니다.
+    </div>
+
+    <div class="input-card">
+      <div class="input-title">✍️ 영어 문장이나 단어 입력</div>
+      <textarea id="englishInput" placeholder="여기에 영어 문장을 입력하거나 사진을 올려주세요."></textarea>
+
+      <div class="image-preview-container" id="previewContainer">
+        <img id="imagePreview" class="image-preview" src="" alt="사진 미리보기">
+        <button class="btn-remove-image" onclick="clearImage()">✕</button>
+      </div>
+
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleImageSelect(event)">
+      <input type="file" id="galleryInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+
+      <div class="action-row">
+        <button class="btn btn-secondary" onclick="document.getElementById('cameraInput').click()">
+          📷 사진 촬영
+        </button>
+        <button class="btn btn-secondary" onclick="document.getElementById('galleryInput').click()">
+          🖼️ 앨범 선택
+        </button>
+        <button class="btn btn-primary" onclick="analyzeEnglish()">
+          🔍 또박또박 분석하기
+        </button>
+      </div>
+    </div>
+
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <div class="loading-text">선생님이 친절하게 분석하고 있습니다...</div>
+      <div class="loading-subtext">발음과 한국어 해석을 준비하는 중입니다.</div>
+    </div>
+
+    <div class="results-container" id="resultsContainer"></div>
+  </main>
+
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <h2>⚙️ Gemini API 키 설정</h2>
+      <p style="font-size:14px; color:var(--text-sub);">
+        Google AI Studio에서 발급받은 무료 API 키를 입력해 두시면 브라우저에 안전하게 저장됩니다.
+      </p>
+      <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+      <div class="modal-buttons">
+        <button class="btn btn-secondary" style="padding:10px 16px; font-size:15px;" onclick="closeSettings()">닫기</button>
+        <button class="btn btn-primary" style="padding:10px 16px; font-size:15px; grid-column:auto;" onclick="saveApiKey()">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedImageBase64 = null;
+    let selectedImageMime = '';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedKey = localStorage.getItem('gemini_api_key');
+      if (savedKey) {
+        document.getElementById('apiKeyInput').value = savedKey;
+      }
+    });
+
+    function openSettings() {
+      document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function saveApiKey() {
+      const key = document.getElementById('apiKeyInput').value.trim();
+      if (!key) {
+        alert('API 키를 입력해주세요.');
+        return;
+      }
+      localStorage.setItem('gemini_api_key', key);
+      alert('API 키가 저장되었습니다.');
+      closeSettings();
+    }
+
+    function handleImageSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      selectedImageMime = file.type || 'image/jpeg';
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const fullBase64 = e.target.result;
+        selectedImageBase64 = fullBase64.split(',')[1];
+        document.getElementById('imagePreview').src = fullBase64;
+        document.getElementById('previewContainer').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearImage() {
+      selectedImageBase64 = null;
+      document.getElementById('imagePreview').src = '';
+      document.getElementById('previewContainer').style.display = 'none';
+      document.getElementById('cameraInput').value = '';
+      document.getElementById('galleryInput').value = '';
+    }
+
+    function speakText(text, btnElement) {
+      if (!('speechSynthesis' in window)) {
+        alert('이 브라우저에서는 음성 듣기가 지원되지 않습니다.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      if (btnElement && btnElement.classList.contains('playing')) {
+        btnElement.classList.remove('playing');
+        btnElement.innerHTML = '🔊 천천히 듣기';
+        return;
+      }
+
+      document.querySelectorAll('.btn-listen').forEach(b => {
+        b.classList.remove('playing');
+        b.innerHTML = '🔊 천천히 듣기';
+      });
+
+      const cleanText = text.replace(/\//g, ' ');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.78;
+      utterance.pitch = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      const usVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha')));
+      if (usVoice) utterance.voice = usVoice;
+
+      if (btnElement) {
+        btnElement.classList.add('playing');
+        btnElement.innerHTML = '⏹️ 멈추기';
+      }
+
+      utterance.onend = function() {
+        if (btnElement) {
+          btnElement.classList.remove('playing');
+          btnElement.innerHTML = '🔊 천천히 듣기';
+        }
+      };
+
+      utterance.onerror = function() {
+        if (btnElement) {
+          btnElement.classList.remove('playing');
+          btnElement.innerHTML = '🔊 천천히 듣기';
+        }
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    async function analyzeEnglish() {
+      const apiKey = localStorage.getItem('gemini_api_key');
+      const textInput = document.getElementById('englishInput').value.trim();
+
+      if (!apiKey) {
+        alert('먼저 우측 상단 [⚙️ 설정]을 눌러 Gemini API 키를 등록해주세요.');
+        openSettings();
+        return;
+      }
+
+      if (!textInput && !selectedImageBase64) {
+        alert('영어 문장을 입력하거나 사진을 올려주세요.');
+        return;
+      }
+
+      const loading = document.getElementById('loadingState');
+      const resultsContainer = document.getElementById('resultsContainer');
+      loading.style.display = 'block';
+      resultsContainer.innerHTML = '';
+
+      const systemPrompt = `You are an American English educator specializing in teaching Korean senior learners.
+Analyze the provided English input (text or photo). Break down the text into clear, individual sentences.
+Output a JSON array where each object has:
+- "original": Standard English sentence
+- "chunked": Divided with slashes for natural breathing pause
+- "pronunciation": Clear Korean phonetic guide for broadcaster/announcer articulation
+- "korean": Polite, natural Korean translation
+- "tip": Short nuance/pronunciation tip in Korean (optional)
+Output ONLY raw valid JSON array.`;
+
+      const parts = [];
+      if (textInput) parts.push({ text: `English input: ${textInput}` });
+      if (selectedImageBase64) {
+        parts.push({
+          inlineData: { mimeType: selectedImageMime, data: selectedImageBase64 }
+        });
+        parts.push({ text: "Recognize English in this image and analyze it." });
+      }
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            contents: [{ parts }],
+            generationConfig: {
+              temperature: 0.2,
+              responseMimeType: "application/json"
+            }
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error?.message || 'API 요청 실패');
+        }
+
+        const data = await response.json();
+        let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawText) throw new Error('응답 데이터가 없습니다.');
+
+        rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+        const sentences = JSON.parse(rawText);
+
+        renderResults(sentences);
+      } catch (err) {
+        alert('오류 발생: ' + err.message);
+      } finally {
+        loading.style.display = 'none';
+      }
+    }
+
+    function renderResults(sentences) {
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = '';
+
+      if (!Array.isArray(sentences) || sentences.length === 0) {
+        container.innerHTML = '<div class="sentence-card">인식된 영어 문장이 없습니다.</div>';
+        return;
+ }
+
+ 문장.각 ((항목, idx)) => {
+ const card = document.createElement('div');
+ card.className = 'sentence 카드';
+ const originalSafe = (item.original || ''.replace(/'/g, "\\\');
+
+ 카드.innerHTML = '
+ <div class="sentence-header">
+ <span class="sentence 인덱스">문장 ${idx + 1}</span>
+ <버튼 클래스="btn-청취" 클릭="SpeakText('${오리지널 세이프}, 이)">
+ 🔊 천천히 듣기
+ </버튼>
+ </div>
+ <div class="원문-텍스트">${item.original || ''}/div>
+ <div class="chunk ed-text">
+ <span class="chunk ed-label">✂️ 숨 쉬며 끊어 읽기</span>
+ ${항목}.청크 || ''
+ </div>
+ <div class="detail 행">
+ <div class="detail-title">🗣️ 또박또박 한글 발음</div>
+ <div class="발음 상자">${item.발음 || ''}/div>
+ </div>
+ <div class="detail 행">
+ <div class="detail-title">🇰🇷 우리말 뜻</div>
+ <div class="한국 상자">${항목.한국어 || ''}/div>
+ </div>
+ ${item.tip?}
+ <div class="detail 행" 스타일="배경:#fafa; 패딩:10 px 12 px; 테두리-radius:8 px; 여백-위:10 px;">
+ <div style="font 사이즈:14 px; 색상:#555;">💡 <b> 선생님 조언://b> ${item.tip}/div>
+ </div>: ''
+ `;
+ container.appendChild(카드);
+ });
+ }
+ </대본>
+</몸>
+</HTML>
